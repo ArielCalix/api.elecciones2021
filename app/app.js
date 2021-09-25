@@ -8,16 +8,18 @@ const App = express();
 // const Aulas = require('./routes/aulasRoutes');
 // const Catedraticos = require('./routes/catedraticosRoutes');
 // const Fichas = require('./routes/fichasRoutes');
+const Sheet = require('./routes/sheetsRoutes');
 const Usuarios = require('./routes/usuariosRoutes');
 // const Facultades = require('./routes/facultadesRoutes');
 
-App.use(bodyParser.json());
-App.use(bodyParser.urlencoded({ extended: false }));
+App.use(express.json());
+App.use(express.urlencoded({ extended: false }));
 
 // App.use('/api/clases', Clases);
 // App.use('/api/aulas', Aulas);
 // App.use('/api/catedraticos', Catedraticos);
 // App.use('/api/fichas', Fichas);
+App.use('/api/sheets', Sheet);
 App.use('/api/usuarios', Usuarios);
 // App.use('/api/facultades', Facultades);
 
