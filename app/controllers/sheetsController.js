@@ -1,24 +1,46 @@
 'use strict'
-const Sheet = require('../models/spreadSheet');
+const { GoogleSpreadsheet } = require('google-spreadsheet');
+const { sheetDataGet } = require('../models/spreadSheet');
 const config = require('../config/config');
 const { google } = require('googleapis');
+const sheets = google.sheets('v4');
+sheetDataGet.auth = config.API_TOKEN;
 
 async function getData(request, response) {
-    const sheets = google.sheets('v4');
-    Sheet.spreadsheetId = request.body.spreadSheetId;
-    Sheet.ranges = [request.body.ranges];
-    Sheet.auth = config.API_TOKEN;
-    await getDataSheet(sheets, Sheet).then(data => {
-        if (data.length) return response.status(200).send({ data });
-        return response.status(204).send({ Message: 'Empty' })
-    }).catch(error => {
-        return response.status(500).send({ error });
-    });
+    sheetDataGet.spreadsheetId = request.body.spreadSheetId;
+    sheetDataGet.ranges = [request.body.ranges];
+    await getDataSheet(sheetDataGet)
+        .then(result => {
+            if (result['statusText'] === 'OK') return response
+                .status(200)
+                .send({ data: result.data.valueRanges[0].values, Message: 'Success' });
+            return response.status(204).send({ Message: 'Empty' })
+        }).catch(error => {
+            return response.status(500).send({ error });
+        });
 }
 
-async function getDataSheet(sheets, Sheet) {
-    const dataSheet = (await sheets.spreadsheets.values.batchGet(Sheet)).data.valueRanges[0].values;
+async function insertData(request, response) {
+    const document = new GoogleSpreadsheet(request.body.spreadSheetId);
+    await document.useServiceAccountAuth({
+        client_email: config.CLIENT_EMAIL,
+        private_key: config.PRIVATE_KEY
+    });
+    await document.loadInfo();
+    const sheet = document.sheetsByTitle[request.body.sheetName];
+    const prevRows = sheet.rowCount;
+    await sheet.addRow(request.body)
+        .then(result => {
+            if (result.rowIndex > prevRows) return response.status(200).send({ Message: 'Row Added!' });
+            return response.status(204).send({ Message: 'Empty' })
+        }).catch(error => {
+            return response.status(500).send({ error });
+        });
+}
+
+async function getDataSheet(Sheet) {
+    const dataSheet = (await sheets.spreadsheets.values.batchGet(Sheet));
     return dataSheet;
 }
 
-module.exports = { getData }
+module.exports = { getData, insertData }

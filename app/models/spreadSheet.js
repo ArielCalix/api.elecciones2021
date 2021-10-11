@@ -1,9 +1,9 @@
 'use strict'
 
-let sheet = {
+let sheetDataGet = {
     spreadsheetId: String,
-    ranges: Array<String>[],
+    ranges: Array < String > [],
     auth: String
 };
 
-module.exports = sheet;
+module.exports = { sheetDataGet };
