@@ -4,7 +4,8 @@
   "description": "Api para retraer informacion de las elecciones 2021",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index.js"
+    "start": "node index.js",
+    "dev": "nodemon index.js"
   },
   "author": "Ariel Calix",
   "license": "ISC",
