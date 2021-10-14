@@ -7,7 +7,8 @@ const sheets = google.sheets('v4');
 sheetDataGet.auth = config.API_TOKEN;
 
 async function getData(request, response) {
-    sheetDataGet.spreadsheetId = request.body.spreadSheetId;
+    var spreadSheetId = request.params.value;
+    sheetDataGet.spreadsheetId = spreadSheetId;
     sheetDataGet.ranges = [request.body.ranges];
     await getDataSheet(sheetDataGet)
         .then(result => {
@@ -21,7 +22,8 @@ async function getData(request, response) {
 }
 
 async function insertData(request, response) {
-    const document = new GoogleSpreadsheet(request.body.spreadSheetId);
+    var spreadSheetId = request.params.value;
+    const document = new GoogleSpreadsheet(spreadSheetId);
     await document.useServiceAccountAuth({
         client_email: config.CLIENT_EMAIL,
         private_key: config.PRIVATE_KEY
