@@ -2,6 +2,7 @@
 
 const express = require('express');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 const App = express();
 
 // const Clases = require('./routes/clasesRoutes');
@@ -12,6 +13,7 @@ const Sheet = require('./routes/sheetsRoutes');
 const Usuarios = require('./routes/usuariosRoutes');
 // const Facultades = require('./routes/facultadesRoutes');
 
+App.use(cors())
 App.use(express.json());
 App.use(express.urlencoded({ extended: false }));
 

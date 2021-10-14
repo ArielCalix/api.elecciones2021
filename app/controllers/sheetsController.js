@@ -7,9 +7,12 @@ const sheets = google.sheets('v4');
 sheetDataGet.auth = config.API_TOKEN;
 
 async function getData(request, response) {
-    var spreadSheetId = request.params.value;
+    var ranges = request.params.value;
+    var spreadSheetId = request.params.key;
     sheetDataGet.spreadsheetId = spreadSheetId;
-    sheetDataGet.ranges = [request.body.ranges];
+    console.log(request.body)
+    sheetDataGet.ranges = [ranges];
+    console.log(sheetDataGet);
     await getDataSheet(sheetDataGet)
         .then(result => {
             if (result['statusText'] === 'OK') return response
@@ -22,7 +25,8 @@ async function getData(request, response) {
 }
 
 async function insertData(request, response) {
-    var spreadSheetId = request.params.value;
+    var spreadSheetId = request.params.key;
+    console.log(request.body)
     const document = new GoogleSpreadsheet(spreadSheetId);
     await document.useServiceAccountAuth({
         client_email: config.CLIENT_EMAIL,
