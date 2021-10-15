@@ -24,14 +24,14 @@ async function getData(request, response) {
 
 async function insertData(request, response) {
     var spreadSheetId = request.params.key;
-    var sheet = request.params.value;
+    var sheetName = request.params.value;
     const document = new GoogleSpreadsheet(spreadSheetId);
     await document.useServiceAccountAuth({
         client_email: config.CLIENT_EMAIL,
         private_key: config.PRIVATE_KEY
     });
     await document.loadInfo();
-    const sheet = document.sheetsByTitle[sheet];
+    const sheet = document.sheetsByTitle[sheetName];
     const prevRows = sheet.rowCount;
     await sheet.addRow(request.body)
         .then(result => {
